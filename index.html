@@ -1,1 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flavio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  body {
+    min-height: 100vh;
+    background: #1a0a1e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  /* Gradient mesh background */
+  .bg {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%, #3d1a4a 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 70%, #1a0d30 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 50% 50%, #2a0a22 0%, transparent 80%),
+      #0d0612;
+    animation: bgShift 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes bgShift {
+    0%   { filter: hue-rotate(0deg) brightness(1); }
+    50%  { filter: hue-rotate(15deg) brightness(1.1); }
+    100% { filter: hue-rotate(-10deg) brightness(0.95); }
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.25;
+    animation: floatOrb linear infinite;
+  }
+
+  .orb-1 { width: 300px; height: 300px; background: #c45c8a; top: -50px; left: -80px; animation-duration: 18s; animation-delay: 0s; }
+  .orb-2 { width: 200px; height: 200px; background: #7b3fa0; bottom: 10%; right: 5%; animation-duration: 22s; animation-delay: -6s; }
+  .orb-3 { width: 150px; height: 150px; background: #e87ca0; top: 60%; left: 10%; animation-duration: 16s; animation-delay: -10s; }
+  .orb-4 { width: 250px; height: 250px; background: #4a2060; top: 30%; right: 20%; animation-duration: 25s; animation-delay: -3s; }
+
+  @keyframes floatOrb {
+    0%   { transform: translate(0, 0) scale(1); }
+    25%  { transform: translate(40px, -60px) scale(1.1); }
+    50%  { transform: translate(-30px, 30px) scale(0.9); }
+    75%  { transform: translate(60px, 50px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  /* Particles / petals */
+  .particles { position: fixed; inset: 0; pointer-events: none; }
+
+  .particle {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: riseUp linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes riseUp {
+    0%   { transform: translateY(110vh) translateX(0) rotate(0deg) scale(0); opacity: 0; }
+    10%  { opacity: 0.8; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(-10vh) translateX(calc(var(--drift) * 1px)) rotate(360deg) scale(0.3); opacity: 0; }
+  }
+
+  /* Heart particles */
+  .heart-particle {
+    position: absolute;
+    font-size: 14px;
+    animation: riseHeart linear infinite;
+    opacity: 0;
+    user-select: none;
+  }
+
+  @keyframes riseHeart {
+    0%   { transform: translateY(110vh) scale(0.5); opacity: 0; }
+    15%  { opacity: 0.6; }
+    80%  { opacity: 0.3; }
+    100% { transform: translateY(-5vh) scale(1.2); opacity: 0; }
+  }
+
+  /* Stars */
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50%       { opacity: 0.8; transform: scale(1.4); }
+  }
+
+  /* Main content */
+  .center {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.4em;
+    color: #c589b0;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeSlideUp 1.2s ease forwards 0.3s;
+    margin-bottom: 1rem;
+  }
+
+  .name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(5rem, 14vw, 10rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #f2c4de 0%, #e8a0c8 30%, #d472a8 60%, #b84f8a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: revealName 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s;
+    text-shadow: none;
+    filter: drop-shadow(0 0 40px rgba(210, 90, 160, 0.4));
+    position: relative;
+  }
+
+  .name::after {
+    content: 'Flavio';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #f2c4de, #d472a8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: blur(20px);
+    opacity: 0.5;
+    animation: glowPulse 4s ease-in-out infinite 2.6s;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.3; filter: blur(20px); }
+    50%       { opacity: 0.7; filter: blur(30px); }
+  }
+
+  @keyframes revealName {
+    0%   { opacity: 0; transform: translateY(30px) scale(0.95); letter-spacing: 0.1em; }
+    100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: -0.02em; }
+  }
+
+  .tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #9a6b88;
+    letter-spacing: 0.15em;
+    opacity: 0;
+    animation: fadeSlideUp 1.2s ease forwards 1.6s;
+    margin-top: 1.5rem;
+  }
+
+  /* Decorative line */
+  .deco-line {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d472a8, transparent);
+    margin: 1.2rem auto;
+    animation: expandLine 1.5s ease forwards 1.3s;
+  }
+
+  @keyframes expandLine {
+    to { width: 180px; }
+  }
+
+  @keyframes fadeSlideUp {
+    0%   { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Floating hearts around name */
+  .float-heart {
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: floatAway ease-in-out infinite;
+  }
+
+  @keyframes floatAway {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    30%  { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-80px) scale(1.2) translateX(var(--hx)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<!-- Orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="orb orb-4"></div>
+
+<!-- Particle canvas -->
+<div class="particles" id="particles"></div>
+
+<!-- Main -->
+<div class="center">
+  <p class="subtitle">✦ pour toi ✦</p>
+  <h1 class="name" id="name">Flavio</h1>
+  <div class="deco-line"></div>
+  <p class="tagline">avec tout l'amour du monde 🌸</p>
+</div>
+
+<script>
+  const container = document.getElementById('particles');
+
+  // Stars
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      animation-duration:${2+Math.random()*4}s;
+      animation-delay:${-Math.random()*5}s;
+    `;
+    container.appendChild(s);
+  }
+
+  // Glow dots
+  const colors = ['#e87ca0','#c45c8a','#f5b8d5','#9b4d7a','#d4a0c0'];
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const c = colors[Math.floor(Math.random()*colors.length)];
+    const size = 3 + Math.random() * 6;
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${size}px; height:${size}px;
+      background:${c};
+      box-shadow: 0 0 ${size*2}px ${c};
+      animation-duration:${8+Math.random()*12}s;
+      animation-delay:${-Math.random()*15}s;
+      --drift:${(Math.random()-0.5)*120};
+    `;
+    container.appendChild(p);
+  }
+
+  // Hearts
+  const heartEmojis = ['🤍','💗','✨','💫','🌸','💕'];
+  for (let i = 0; i < 14; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-particle';
+    h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+    h.style.cssText = `
+      left:${Math.random()*100}%;
+      font-size:${10+Math.random()*16}px;
+      animation-duration:${10+Math.random()*14}s;
+      animation-delay:${-Math.random()*18}s;
+    `;
+    container.appendChild(h);
+  }
+
+  // Floating hearts near name on interval
+  const nameEl = document.getElementById('name');
+  const floatColors = ['💗','💕','✨','🌸','💫'];
+  setInterval(() => {
+    const fh = document.createElement('span');
+    fh.className = 'float-heart';
+    fh.textContent = floatColors[Math.floor(Math.random()*floatColors.length)];
+    fh.style.cssText = `
+      left:${20+Math.random()*60}%;
+      top:${30+Math.random()*40}%;
+      font-size:${10+Math.random()*14}px;
+      --hx:${(Math.random()-0.5)*60}px;
+      animation-duration:${2.5+Math.random()*2}s;
+    `;
+    nameEl.parentElement.appendChild(fh);
+    setTimeout(() => fh.remove(), 5000);
+  }, 900);
+</script>
+</body>
+</html>
